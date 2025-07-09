@@ -1,0 +1,16 @@
+name: Auto-Red
+on:
+  push:
+    paths: ['TEST_LIST.md']
+jobs:
+  red:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { token: ${{ secrets.GH_TOKEN }} }
+      - run: |
+          npm i -g @anthropic-ai/claude-code
+          pip install claude-code-sdk
+      - name: Call Claude Code (red)
+        env: { ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} }
+        run: python cc_auto.py red

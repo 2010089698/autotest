@@ -1,0 +1,21 @@
+name: Self-Heal
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+jobs:
+  fix:
+    if: ${{ github.event.workflow_run.conclusion != 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { token: ${{ secrets.GH_TOKEN }} }
+      - name: Collect logs
+        run: gh run view ${{ github.event.workflow_run.id }} --log > logs.txt
+      - run: |
+          npm i -g @anthropic-ai/claude-code
+          pip install claude-code-sdk
+      - name: Call Claude Code (green)
+        env: { ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} }
+        run: python cc_auto.py green
