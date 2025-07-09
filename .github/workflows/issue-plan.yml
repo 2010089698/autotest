@@ -10,12 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_TOKEN }}
+        with: { token: ${{ secrets.GH_TOKEN }} }
 
+      # ★ Node 20 を用意
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ★ Convex CLI と Claude Code をグローバルインストール
       - run: |
-          npm i -g @anthropic-ai/claude-code
-          pip install claude-code-sdk
+          npm i -g convex @anthropic-ai/claude-code
+          pip install --upgrade pip claude-code-sdk
 
       - name: Call Claude Code (plan)
         env:
